@@ -1,2 +1,12 @@
 npm start
 npm run dev
+
+
+npm install morgan
+
+git init 
+git add .
+git commit -m "initial commit"
+git branch -M main
+git remote add origin https://github.com/emilliukkonen/full-stack-web-development-part3.git
+git push -u origin main
