@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
@@ -30,28 +30,28 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-let persons = []
+
 
 app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
-  })
+  response.send('<h1>Hello World!</h1>')
+})
 
-app.get('/info', (request, response) => {
-    Person.countDocuments({})
-      .then(count => {
-        const time = new Date()
-        response.send(`
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      const time = new Date()
+      response.send(`
           <p>Phonebook has info for ${count} people</p>
           <p>${time}</p>`)
-      })
-      .catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response) => {
-    Person.find({}).then(persons => {
-      response.json(persons)
-    })
+  Person.find({}).then(persons => {
+    response.json(persons)
   })
+})
 
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
@@ -65,9 +65,9 @@ app.get('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request,response) => {
+app.delete('/api/persons/:id', (request,response,next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -78,9 +78,9 @@ app.put('/api/persons/:id', (request, response, next) => {
 
   Person.findByIdAndUpdate(
     request.params.id,
-     {name, number},
-      { new: true, runValidators: true, context: 'query' }
-    )
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -89,16 +89,16 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
+  const body = request.body
 
-    const person = new Person({
-      name: body.name,
-      number: body.number,
-    })
-    
-    person.save().then(savedPerson => {
-      response.json(savedPerson)
-    })
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
     .catch(error => next(error))
 })
 
